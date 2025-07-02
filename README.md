@@ -1,103 +1,69 @@
+# Atelier Bash Deploy
 
-md
-Copier
-Modifier
-# 🛠️ Atelier Bash Deploy
+## Description
 
-Un mini-projet pour apprendre à automatiser le déploiement d’un site statique en Bash avec :
+Ce projet est un atelier Bash visant à apprendre à automatiser un déploiement simple de site statique (ex. : `index.html`) avec :
 
-- ✅ Sauvegarde automatique (rollback)
-- ✅ Déploiement de `src/index.html` dans `deploy_prod/`
-- ✅ Log de déploiement (`deploy_log.txt`)
-- ✅ Tests automatisés de validation post-déploiement
-- ✅ Notification système (selon OS)
-- ✅ Hook Git `post-merge` pour lancer le déploiement après un `git pull`
-- ✅ Script `setup.sh` pour activer facilement le hook
-- ✅ Prise en charge multiplateforme (Linux, macOS, Windows)
+- Sauvegarde automatique de l’ancien déploiement (`deploy_backups/`)
+- Copie des fichiers vers un répertoire de production (`deploy_prod/`)
+- Ajout d’un log horodaté de chaque déploiement (`deploy_log.txt`)
+- Notification sonore de fin de déploiement selon l’OS
+- Possibilité de rollback manuel via les backups
 
----
+## Structure du projet
 
-## 📦 Structure du projet
-
-atelier-bash-deploy/
-├── src/index.html # Fichier source à déployer
+.
 ├── deploy.sh # Script principal de déploiement
-├── test_deploy.sh # Suite de tests de validation post-déploiement
-├── setup.sh # Installation automatique du hook Git post-merge
-├── post-merge # Fichier hook Git à copier dans .git/hooks/
-├── .env # Fichier de configuration des variables (ex: DEPLOY_DIR)
-├── deploy_log.txt # Log de tous les déploiements
-├── deploy_prod/ # Répertoire de destination pour le déploiement
-├── deploy_backups/ # Sauvegardes automatiques en cas de rollback
+├── test_deploy.sh # Script de tests post-déploiement
+├── setup.sh # Script d'installation automatique du hook post-merge
+├── post-merge # Hook Git exécuté automatiquement après un merge
+├── .env # Variables d’environnement (répertoire, nom de fichier, etc.)
+├── deploy_log.txt # Log des déploiements horodatés
+├── deploy_prod/ # Répertoire de destination du déploiement
+├── deploy_backups/ # Répertoire de sauvegardes des anciens déploiements
+├── .github/workflows/ # Workflows GitHub Actions pour CI
+└── src/
+└── index.html # Fichier HTML source à déployer
 
-yaml
+markdown
 Copier
 Modifier
 
----
+## Fonctionnalités
 
-## 🚀 Déploiement
+- 💾 **Backup automatique** avec horodatage (`deploy_backups/`)
+- 🚀 **Déploiement scripté** avec log et vérifications
+- ✅ **Tests automatisés** post-déploiement
+- 🔄 **Hook Git post-merge** : déclenchement auto du déploiement + tests
+- 🔧 **Script `setup.sh`** pour configurer automatiquement le hook
+- 🧪 **CI GitHub Actions** : tests déclenchés à chaque `push` ou `pull request` sur `main`
+- 🧠 **Portabilité** : compatible Windows/macOS/Linux (avec détection OS)
 
-Lance manuellement un déploiement avec :
+## Utilisation
+
+### 1. Déploiement manuel
 
 ```bash
 ./deploy.sh deploy
-🔄 Rollback
-Restaure la dernière version sauvegardée avec :
-
-bash
-Copier
-Modifier
-./deploy.sh rollback
-🧪 Tests
-Exécute les tests automatisés (structure du déploiement, log, etc.) :
-
+2. Lancer les tests à la main
 bash
 Copier
 Modifier
 ./test_deploy.sh
-🔔 Notifications système
-Une notification s'affiche à la fin du déploiement selon ton OS :
-
-Linux : notify-send
-
-macOS : osascript
-
-Windows : start
-
-🪝 Hook Git : post-merge
-Le hook post-merge déclenche automatiquement le déploiement après un git pull :
-
-📌 Installation du hook
-Lance simplement :
-
+3. Installer le hook Git post-merge
 bash
 Copier
 Modifier
 ./setup.sh
-Cela copie automatiquement le fichier post-merge dans .git/hooks/ et le rend exécutable.
+Après un merge Git, cela lancera automatiquement :
 
-⚙️ Fichier .env
-Fichier de configuration pour centraliser les chemins :
+Le script deploy.sh
 
-env
-Copier
-Modifier
-DEPLOY_DIR=./deploy_prod
-BACKUP_DIR=./deploy_backups
-SRC_FILE=./src/index.html
-LOG_FILE=./deploy_log.txt
-✅ Bonus
-Le deploy.sh détecte l'OS pour utiliser la bonne commande d'ouverture ou notification.
+Puis les tests via test_deploy.sh
 
-Tu peux facilement étendre les tests ou ajouter d'autres fichiers à déployer.
+4. GitHub Actions
+Chaque push ou pull request sur main déclenche un job CI qui exécute :
 
-🧠 Pour aller plus loin
-Ajouter un pre-commit pour vérifier que src/index.html est bien modifié
+chmod +x test_deploy.sh
 
-Ajouter une vérification de la validité HTML avec un validateur local
-
-Intégration continue via GitHub Actions pour exécuter les tests automatiquement
-
-✍️ Auteur
-Paul Antoine — Projet pédagogique Bash – Automatisation déploiement statique
+./test_deploy.sh
