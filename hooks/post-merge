@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "🪝 Hook post-merge exécuté"
+
+# Déploiement local
+./deploy.sh
+
+# Déploiement distant (optionnel)
+if command -v ansible-playbook >/dev/null 2>&1; then
+  echo "🌐 Déploiement distant avec Ansible..."
+  ansible-playbook ./deploy_remote.yml
+else
+  echo "⚠️ Ansible n’est pas disponible, déploiement distant ignoré."
+fi

@@ -1,0 +1,25 @@
+---
+- name: Installer les hooks Git du projet
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    repo_path: "{{ lookup('env','PWD') }}"
+    hooks_src: "./hooks"
+    hooks_files:
+      - post-merge
+
+  tasks:
+    - name: Copier les hooks
+      copy:
+        src: "{{ hooks_src }}/{{ item }}"
+        dest: "{{ repo_path }}/.git/hooks/{{ item }}"
+        mode: "0755"
+      loop: "{{ hooks_files }}"
+
+    - name: Copier les scripts helpers dans .git/hooks/
+      copy:
+        src: "{{ hooks_src }}/helpers/"
+        dest: "{{ repo_path }}/.git/hooks/helpers/"
+        mode: "0755"
+        recurse: yes

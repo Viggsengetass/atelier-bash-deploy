@@ -1,0 +1,15 @@
+---
+- name: Déployer index.html sur un serveur distant
+  hosts: web
+  become: false
+  tasks:
+    - name: Créer le dossier de déploiement
+      file:
+        path: ~/deploy_prod/
+        state: directory
+        mode: "0755"
+
+    - name: Copier index.html
+      copy:
+        src: index.html
+        dest: ~/deploy_prod/index.html

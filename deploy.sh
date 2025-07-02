@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DEPLOY_DIR="./deploy_prod"  # Chemin relatif au projet
+DEPLOY_DIR="./deploy_prod"  # Dossier local simulant un serveur
 
-echo "🚀 Déploiement en cours..."
+echo "🚀 Déploiement local en cours..."
 
 mkdir -p "$DEPLOY_DIR"
 
