@@ -1,0 +1,4 @@
+deploy_dir: "./deploy_prod"
+backup_dir: "./deploy_backups"
+log_file: "deploy_log.txt"
+src_dir: "src"
