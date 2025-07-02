@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "📦 Hook post-merge déclenché"
+
+# Lancer automatiquement un déploiement + tests après merge
+./deploy.sh deploy

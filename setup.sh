@@ -1,9 +1,13 @@
 #!/bin/bash
 
-# Script d'installation du hook Git post-merge
-HOOK_FILE=".git/hooks/post-merge"
+# Vérifie si le fichier existe
+if [ ! -f "./post-merge" ]; then
+  echo "❌ Erreur : fichier ./post-merge introuvable"
+  exit 1
+fi
 
+# Installation du hook Git post-merge
 echo "🔧 Installation du hook Git post-merge..."
-cp post-merge "$HOOK_FILE"
-chmod +x "$HOOK_FILE"
+cp ./post-merge .git/hooks/post-merge
+chmod +x .git/hooks/post-merge
 echo "✅ Hook post-merge installé avec succès"
