@@ -8,6 +8,7 @@ deploy_backups/
 *.bak
 deploy_log.txt
 
+*.txt
 .idea/
 .vscode/
 .DS_Store
