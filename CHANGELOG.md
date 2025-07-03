@@ -27,3 +27,9 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 ### Modifié
 - README initialisé avec badge de CI et explications d’usage
 
+
+
+## [v1.1.0] - 2025-07-03
+
+### Ajouté
+- Versionning
