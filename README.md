@@ -71,6 +71,20 @@ Cela installera le hook Git `post-merge` automatiquement.
 
 Les tests de déploiement sont exécutés automatiquement via **GitHub Actions** sur chaque push ou pull request sur `main`. Voir `.github/workflows/test-deploy.yml`.
 
+
+## Versionnement
+
+Ce projet utilise [Git](https://git-scm.com/) pour le suivi de version. Chaque modification majeure est taguée avec un numéro de version selon le format [SemVer](https://semver.org/lang/fr/), par exemple :
+
+
+Pour créer une nouvelle version :
+
+```bash
+git tag vX.X.X
+git push origin vX.X.X
+```
+
+
 ## Auteurs
 
 - Paul Antoine — CESI 2025 — Projet Atelier Bash
