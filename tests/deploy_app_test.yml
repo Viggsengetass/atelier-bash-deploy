@@ -1,0 +1,6 @@
+---
+- name: Test du rôle deploy_app
+  hosts: localhost
+  connection: local
+  roles:
+    - { role: deploy_app }

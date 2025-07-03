@@ -1,0 +1,47 @@
+---
+
+- name: S’assurer que les répertoires existent
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ deploy_dir }}"
+    - "{{ backup_dir }}"
+  tags:
+    - deploy
+
+- name: Vérifier présence d’un déploiement
+  stat:
+    path: "{{ deploy_dir }}"
+  register: deploy_dir_stat
+  changed_when: false
+  tags:
+    - deploy
+
+- name: Sauvegarder le déploiement courant
+  when: deploy_dir_stat.stat.exists
+  shell: |
+    ts=$(date +%Y%m%d_%H%M%S)
+    dest="{{ backup_dir }}/deploy_${ts}"
+    mkdir -p "$dest"
+    cp -r {{ deploy_dir }}/. "$dest/"
+  args:
+    executable: /bin/bash
+  tags:
+    - deploy
+
+- name: Copier les nouvelles sources
+  copy:
+    src: "{{ src_dir }}/"
+    dest: "{{ deploy_dir }}/"
+    mode: preserve
+    remote_src: true
+
+
+- name: Journaliser la date de déploiement
+  lineinfile:
+    path: "{{ log_file }}"
+    create: true
+    line: "{{ ansible_date_time.iso8601 }} - Deployment completed"
+  tags:
+    - deploy
