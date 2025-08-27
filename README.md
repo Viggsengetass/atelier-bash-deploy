@@ -1,53 +1,80 @@
-# Atelier Bash Deploy
+# 🤪 atelier-bash-deploy
 
-[![CI - Test Déploiement](https://github.com/Viggsgenetass/atelier-bash-deploy/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/Viggsgenetass/atelier-bash-deploy/actions/workflows/test-deploy.yml)
+Projet de déploiement automatisé Bash avec interface CLI, tests et CI/CD GitHub Actions.
+Réalisé dans le cadre d’un exercice en équipe visant à construire une chaîne de déploiement complète et modulable sans utiliser Docker ou un framework externe.
 
-Ce projet propose une solution de déploiement automatisée simple et efficace à l’aide de scripts Bash. Il intègre des fonctionnalités essentielles pour gérer les déploiements, les tests, les sauvegardes et les restaurations.
+---
 
-## Fonctionnalités
+## 🔧 Fonctionnalités principales
 
-- **Déploiement automatisé** avec sauvegarde automatique
-- **Tests post-déploiement** (existence de fichiers, logs, etc.)
-- **Rollback automatique** vers la dernière version stable en cas d’erreur
-- **Interface CLI interactive** pour faciliter l’usage
-- **Hook Git `post-merge`** pour déclencher un déploiement automatiquement après un merge
-- **Intégration continue** via GitHub Actions pour lancer les tests à chaque `push` ou `pull request` sur `main`
+* **Déploiement de fichiers** avec sauvegarde automatique (`deploy.sh`)
+* **Logs de déploiement** complets et horodatés (`deploy_log.txt`)
+* **Interface CLI interactive** (`menu.sh`)
+* **Rollback automatique** vers le dernier backup (`rollback.sh`)
+* **Variables d’environnement** centralisées via `.env`
+* **Hook Git `post-merge`** pour déclencher automatiquement le déploiement (`post-merge`, `setup.sh`)
+* **Tests automatisés Bash** pour valider les déploiements (`test_deploy.sh`)
+* **Intégration Continue (CI)** avec GitHub Actions (`.github/workflows/test-deploy.yml`)
+* **Tests unitaires Bash** (via `bats`) pour valider les fonctions critiques
+* **Déploiement continu (CD)** vers AWS (S3 ou EC2)
 
-## Structure
+---
 
-```bash
-.
-├── deploy.sh            # Script principal de déploiement
-├── rollback.sh          # Script de restauration (rollback)
-├── test_deploy.sh       # Script de tests post-déploiement
-├── menu.sh              # Menu CLI interactif
-├── setup.sh             # Installation du hook post-merge
-├── post-merge           # Hook Git déclenchant le déploiement
-├── deploy_prod/         # Répertoire cible du déploiement
-├── deploy_backups/      # Sauvegardes avant chaque déploiement
-├── .env                 # Fichier de configuration (non versionné)
-├── deploy_log.txt       # Historique des déploiements
-└── .github/
-    └── workflows/
-        └── test-deploy.yml   # CI GitHub Actions pour les tests
+## 📁 Arborescence du projet
+
+```
+atelier-bash-deploy/
+├── .github/workflows/
+│   ├── test-deploy.yml       # CI tests post-déploiement
+│   ├── unit-tests.yml        # CI tests unitaires Bash
+│   └── deploy-to-aws.yml     # CD déploiement AWS
+├── deploy.sh                 # Script de déploiement principal
+├── rollback.sh               # Script de restauration automatique
+├── menu.sh                   # Interface CLI interactive
+├── test_deploy.sh            # Script de tests post-déploiement
+├── setup.sh                  # Installe les hooks Git
+├── post-merge                # Hook déclenchant un déploiement après merge
+├── .env                      # Variables de configuration
+├── deploy_backups/           # Backups horodatés
+├── deploy_prod/              # Répertoire cible du déploiement
+├── src/                      # Fichiers sources à déployer
+├── deploy_log.txt            # Log des opérations
+├── tests/                    # Tests unitaires Bash (bats)
+│   └── test_config.bats      # Exemple de test unitaire
+├── README.md                 # Documentation du projet
+├── CHANGELOG.md              # Historique des versions
 ```
 
-## Installation
+---
 
-```bash
-chmod +x setup.sh
-./setup.sh
+## 🚀 Lancer le projet
+
+### 1. Configurer `.env`
+
+```env
+SRC_DIR=./src
+DEPLOY_DIR=./deploy_prod
+BACKUP_DIR=./deploy_backups
+LOG_FILE=./deploy_log.txt
+MAX_BACKUPS=5
 ```
 
-Cela installera le hook Git `post-merge` automatiquement.
-
-## Utilisation
-
-### Déploiement manuel
+### 2. Lancer manuellement
 
 ```bash
-./deploy.sh deploy
+chmod +x *.sh
+./deploy.sh
 ```
+
+### 3. Utiliser l’interface interactive
+
+```bash
+./menu.sh
+```
+
+---
+
+## 🤪 Lancer les tests
 
 ### Tests post-déploiement
 
@@ -55,36 +82,102 @@ Cela installera le hook Git `post-merge` automatiquement.
 ./test_deploy.sh
 ```
 
-### Rollback automatique
+> Vérifie :
+>
+> * L’existence du dossier de déploiement
+> * La copie des fichiers
+> * L’enregistrement du log
+> * La date du dernier log
+> * L’existence du backup
+
+### Tests unitaires Bash (via `bats`)
 
 ```bash
-./rollback.sh
+bats tests/
 ```
 
-### Menu interactif
+> Vérifie :
+>
+> * La bonne lecture des variables `.env`
+> * Le respect du nombre max de backups
+> * La gestion des erreurs (ex: répertoire introuvable)
+> * Les fonctions utilitaires des scripts
+
+---
+
+## 🔄 Automatiser avec Git
+
+### 1. Installation du hook `post-merge`
 
 ```bash
-./menu.sh
+./setup.sh
 ```
 
-## CI - Intégration Continue
+> Installe un hook Git local `.git/hooks/post-merge` déclenchant automatiquement `./deploy.sh` après chaque fusion (`git merge`).
 
-Les tests de déploiement sont exécutés automatiquement via **GitHub Actions** sur chaque push ou pull request sur `main`. Voir `.github/workflows/test-deploy.yml`.
+---
 
+## ⚙️ Intégration Continue (CI)
 
-## Versionnement
+Chaque `push` ou `pull_request` sur `main` déclenche GitHub Actions :
 
-Ce projet utilise [Git](https://git-scm.com/) pour le suivi de version. Chaque modification majeure est taguée avec un numéro de version selon le format [SemVer](https://semver.org/lang/fr/), par exemple :
+* **Job `lint/test`** → exécute les tests unitaires Bash (`bats`) et post-déploiement (`test_deploy.sh`)
+* **Job `deploy`** → déclenché uniquement après **merge sur `main`**, déploie vers AWS (S3 ou EC2)
 
+### 🔖 Badges CI/CD
 
-Pour créer une nouvelle version :
+![CI Tests](https://github.com/Viggsengetass/atelier-bash-deploy/actions/workflows/test-deploy.yml/badge.svg)
+![Unit Tests](https://github.com/Viggsengetass/atelier-bash-deploy/actions/workflows/unit-tests.yml/badge.svg)
+![AWS Deploy](https://github.com/Viggsengetass/atelier-bash-deploy/actions/workflows/deploy-to-aws.yml/badge.svg)
+
+---
+
+## ☁️ Déploiement AWS
+
+### 1. Secrets GitHub à configurer
+
+Dans **Settings > Secrets > Actions** :
+
+* `AWS_ACCESS_KEY_ID`
+* `AWS_SECRET_ACCESS_KEY`
+* `AWS_DEFAULT_REGION` (ex: `eu-west-3`)
+
+### 2. Déploiement vers S3
+
+Pour un site statique :
 
 ```bash
-git tag vX.X.X
-git push origin vX.X.X
+aws s3 sync deploy_prod/ s3://mon-bucket-s3 --delete
 ```
 
+### 3. Déploiement vers EC2
 
-## Auteurs
+Pour un serveur applicatif :
 
-- Paul Antoine — CESI 2025 — Projet Atelier Bash
+```bash
+scp -r deploy_prod/* ec2-user@MON_IP:/var/www/html/
+```
+
+---
+
+## 🦯 Roadmap
+
+* [x] Tests automatisés Bash (post-déploiement)
+* [x] CI GitHub Actions pour les tests
+* [ ] Ajout de **tests unitaires Bash** (via `bats`)
+* [ ] Nouveau workflow GitHub Actions pour **déploiement AWS (S3 ou EC2)**
+* [ ] Centralisation avancée de la configuration AWS (`aws-config.sh`)
+* [ ] Amélioration de l’interface CLI (choix de versions à rollback, etc.)
+
+---
+
+## 👥 Contributeurs
+
+* **Paul Antoine**
+* **Néo Dinot** (`NeoDnt`)
+
+---
+
+## 📜 Licence
+
+Projet pédagogique libre – Vous pouvez l’adapter et l’utiliser comme base de vos propres outils internes.
