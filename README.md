@@ -174,7 +174,8 @@ scp -r deploy_prod/* ec2-user@MON_IP:/var/www/html/
 ## 👥 Contributeurs
 
 * **Paul Antoine**
-* **Néo Dinot** (`NeoDnt`)
+* **Teddy Fontep** 
+* **Timo Timo Timo**
 
 ---
 
